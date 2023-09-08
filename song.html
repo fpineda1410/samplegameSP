@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endless Loop Audio</title>
+</head>
+<body>
+    <h1>Enjoy the Music!</h1>
+    <audio id="audioPlayer" >
+        <source src="romance.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.play();
+        // Listen for the "ended" event of the audio element
+        audioPlayer.addEventListener('ended', function() {
+            // Restart the audio when it ends
+            audioPlayer.currentTime = 0; // Reset to the beginning
+            audioPlayer.play(); // Play again
+        });
+    </script>
+</body>
+</html>

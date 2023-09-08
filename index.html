@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse-Move Game with Loaded Images</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    
+
+    
+    <canvas id="gameCanvas">
+        <audio id="audioPlayer" >
+            <source src="romance.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </canvas>
+    <script>
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.play();
+        // Listen for the "ended" event of the audio element
+        audioPlayer.addEventListener('ended', function() {
+            // Restart the audio when it ends
+            audioPlayer.currentTime = 0; // Reset to the beginning
+            audioPlayer.play(); // Play again
+        });
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas dimensions to match the background image
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const backgroundImage = new Image();
+        const birdImage = new Image();
+        const birdImage2 = new Image();
+        const birdImage3 = new Image(); // Add a third bird image
+        let imagesLoaded = 0; // Track the number of loaded images
+
+        // Function to start the game loop when all images are loaded
+        function startGameLoop() {
+            if (imagesLoaded === 3) {
+                gameLoop();
+            }
+        }
+
+        backgroundImage.src = 'https://static.vecteezy.com/system/resources/previews/009/955/763/non_2x/pixel-art-arcade-game-scene-with-floating-platform-mill-bridge-trees-fence-and-clouds-8bit-vector.jpg';
+        backgroundImage.onload = () => {
+            imagesLoaded++;
+            startGameLoop(); // Check if all images are loaded
+        };
+
+        birdImage.src = 'supercharlie.png'; // Replace 'bird.png' with the actual filename of your bird image
+        birdImage.onload = () => {
+            imagesLoaded++;
+            startGameLoop(); // Check if all images are loaded
+        };
+        birdImage2.src = 'bird.png'; // Replace 'bird.png' with the actual filename of your second bird image
+        birdImage2.onload = () => {
+            imagesLoaded++;
+            startGameLoop(); // Check if all images are loaded
+        };
+        birdImage3.src = 'bird.png'; // Replace 'bird.png' with the actual filename of your third bird image
+        birdImage3.onload = () => {
+            imagesLoaded++;
+            startGameLoop(); // Check if all images are loaded
+        };
+
+        const player = {
+            x: canvas.width / 2 - 25, // Initial position
+            y: canvas.height / 2 - 25,
+            width: 150,
+            height: 150,
+        };
+
+        const movingBox = {
+            x: canvas.width / 2 - 25, // Initial position
+            y: canvas.height / 2 - 200.5,
+            width: 70,
+            height: 70,
+            speed: 2, // Speed of the moving box
+            direction: 1, // 1 for right, -1 for left
+        };
+
+        const movingBird = {
+            x: canvas.width / 2 - 25, // Initial position
+            y: canvas.height / 2 - 350.5,
+            width: 70,
+            height: 70,
+            speed: 1, // Speed of the moving bird
+            direction: 1, // 1 for right, -1 for left
+        };
+
+        let mouseX, mouseY;
+
+        canvas.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX - canvas.getBoundingClientRect().left;
+            mouseY = e.clientY - canvas.getBoundingClientRect().top;
+        });
+
+        function drawBackground() {
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+        }
+
+        function drawBird() {
+            ctx.drawImage(birdImage, player.x, player.y, player.width, player.height);
+        }
+
+        function drawMovingBox() {
+            ctx.drawImage(birdImage2, movingBox.x, movingBox.y, movingBox.width, movingBox.height);
+        }
+
+        // Draw the third bird image
+        function drawMovingBird() {
+            ctx.drawImage(birdImage3, movingBird.x, movingBird.y, movingBird.width, movingBird.height);
+        }
+
+        function update() {
+            // Move the player's position to follow the mouse
+            if (mouseX && mouseY) {
+                player.x = mouseX - player.width / 2;
+                player.y = mouseY - player.height / 2;
+            }
+
+            // Move the moving box back and forth
+            if (movingBox.x + movingBox.width >= canvas.width || movingBox.x <= 0) {
+                movingBox.direction *= -1; // Reverse direction
+            }
+            movingBox.x += movingBox.speed * movingBox.direction;
+
+            // Move the moving bird back and forth
+            if (movingBird.y + movingBird.height >= canvas.height/2 ||movingBird.y <= 0) {
+                console.log(movingBird.y)
+                movingBird.direction *= -1; // Reverse direction
+            }
+            movingBird.y += movingBird.speed * movingBird.direction;
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBackground();
+            drawBird();
+            drawMovingBox();
+            // Call the function to draw the moving bird
+            drawMovingBird();
+            update();
+
+            requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+</html>

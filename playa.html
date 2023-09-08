@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse-Move Game with Moving Box</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas dimensions to match the background image
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const backgroundImage = new Image();
+        backgroundImage.src = 'https://static.vecteezy.com/system/resources/previews/009/955/763/non_2x/pixel-art-arcade-game-scene-with-floating-platform-mill-bridge-trees-fence-and-clouds-8bit-vector.jpg';
+
+        const player = {
+            x: canvas.width / 2 - 25, // Initial position
+            y: canvas.height / 2 - 25,
+            width: 50,
+            height: 50,
+        };
+
+        const movingBox = {
+            x: canvas.width / 2 - 25, // Initial position
+            y: canvas.height / 2 - 100.5,
+            width: 50,
+            height: 25,
+            speed: 2, // Speed of the moving box
+            direction: 1, // 1 for right, -1 for left
+        };
+
+        let mouseX, mouseY;
+
+        canvas.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX - canvas.getBoundingClientRect().left;
+            mouseY = e.clientY - canvas.getBoundingClientRect().top;
+        });
+
+        function drawBackground() {
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+        }
+
+        function drawPlayer() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        function drawMovingBox() {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(movingBox.x, movingBox.y, movingBox.width, movingBox.height);
+        }
+
+        function update() {
+            // Move the player's position to follow the mouse
+            if (mouseX && mouseY) {
+                player.x = mouseX - player.width / 2;
+                player.y = mouseY - player.height / 2;
+            }
+
+            // Move the moving box back and forth
+            if (movingBox.x + movingBox.width >= canvas.width || movingBox.x <= 0) {
+                movingBox.direction *= -1; // Reverse direction
+            }
+            movingBox.x += movingBox.speed * movingBox.direction;
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBackground();
+            drawPlayer();
+            drawMovingBox();
+            update();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        backgroundImage.onload = () => {
+            gameLoop();
+        };
+    </script>
+</body>
+</html>
